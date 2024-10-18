@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 instance_id=$1
 target_os=$2
 command=$3
