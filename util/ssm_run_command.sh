@@ -69,11 +69,11 @@ send_command () {
     fi
 
     # Sanitize command
-    sanitized_command=$(printf "%s" "$1" | sed 's/\$/\\$/g' | sed s/\'/"\\\'"/g)
-    command_list=$(echo -n $sanitized_command | jq -R -s -c 'split("\n")')
+    command_list=$(echo -n "$1" | jq -R -s -c 'split("\n")')
+    sanitized_command=$(printf "%s" "$command_list" | sed s/\'/"\\\'"/g)
 
     # Execute SSM command on target instance
-    ssm_command="aws ssm send-command --instance-id $instance_id --document-name $document_name --parameters commands='$command_list' --query 'Command.CommandId' --output text $2"
+    ssm_command="aws ssm send-command --instance-id $instance_id --document-name $document_name --parameters commands='$sanitized_command' --query 'Command.CommandId' --output text $2"
     ssm_command_id=$(eval "$ssm_command" 2>&1)
     ssm_command_exit_code="$?"
     echo "$ssm_command_id"
